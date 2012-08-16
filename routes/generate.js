@@ -43,8 +43,8 @@ exports.index = function(req, res) {
 
         if(curFiles) {
           
-          curFiles.forEach(function(e1){
-            console.log(e1);
+          curFiles.forEach(function(currentFile){
+            console.log(currentFile);
           });
 
         } else {
