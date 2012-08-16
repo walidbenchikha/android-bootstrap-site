@@ -65,12 +65,16 @@ exports.index = function(req, res) {
 }
 
 /*
-  Accepts a file and then renders the contents of the file back out with the appropriate 
-*/
+ * Accepts a file and then renders the contents of the file back out with the appropriate 
+ */
 function renderFileContent(pathToFile) {
 
 }
 
+/*
+ * Sends a directory to the steam as a zip file. 
+ * Source: http://stackoverflow.com/a/6837589/5210
+ */
 function sendZipToResponse(res, dirToZip) {
 
   // Options -r recursive - redirect to stdout
