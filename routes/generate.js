@@ -5,14 +5,69 @@ var wrench = require('wrench'),
  * Project generator route. 
 */
 exports.index = function(req, res) {
-  
+    
+    // TODO: The below variables do not work yet. Not sure why. Need to investigate. 
+    var appName = req.params.appName;
+    var packageName = req.params.packageName;
+
+    console.log("App Name:" + appName);
+    console.log("Package Name:" + packageName);
+
+
+    // Steps
+    // 1. Create a temporary file location. 
+    // 2. Rename the directories accordingly. 
+    // 3. Loop over all the files and perform replacements. 
+    // 4. Zip up the file & Send to the output stream
+    // 5. Delete the temporary file. 
+    // 6. All Done. 
+
     var destDir = process.env.PWD + '/../android-bootstrap-2';
 
     // Copy the files. 
-    wrench.copyDirSyncRecursive(process.env.PWD + '/../android-bootstrap', destDir);
+    // TODO: Uncopy once the files are in the system.
+    //wrench.copyDirSyncRecursive(process.env.PWD + '/../android-bootstrap', destDir);
 
-    sendZipToResponse(res, destDir);
-    console.log(process.env);
+
+
+    var files = []; 
+    wrench.readdirRecursive(destDir, function(error, curFiles) {
+      // Callback receives the files in the currently recursed directory. 
+      // When no more dirs are left, callback is called with null for all arguments. 
+      // SRC: https://github.com/ryanmcgrath/wrench-js/blob/master/lib/wrench.js
+
+      if(error) {
+        res.json(500, { err : error });
+
+      } else {
+
+        if(curFiles) {
+          
+          curFiles.forEach(function(e1){
+            console.log(e1);
+          });
+
+        } else {
+          // Both curFiles and error will be null when the fiel processing is complete. 
+          res.json(200, { message: "done"});            
+        }
+
+        //res.json(200, { message: "done"});  
+        // TODO: When done, zip the file and send it to the user. 
+        // TODO: Move it to S3?
+        // TODO: Then delete that file. 
+
+      }
+      
+    });
+
+    
+}
+
+/*
+  Accepts a file and then renders the contents of the file back out with the appropriate 
+*/
+function renderFileContent(pathToFile) {
 
 }
 
