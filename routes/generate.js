@@ -5,7 +5,7 @@ var wrench = require('wrench'),
  * Project generator route. 
 */
 exports.index = function(req, res) {
-    
+
     // TODO: The below variables do not work yet. Not sure why. Need to investigate. 
     var appName = req.params.appName;
     var packageName = req.params.packageName;
@@ -44,6 +44,7 @@ exports.index = function(req, res) {
         if(curFiles) {
           
           curFiles.forEach(function(currentFile){
+            // Process and rename files
             console.log(currentFile);
           });
 

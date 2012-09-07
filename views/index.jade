@@ -1,5 +1,21 @@
 extends layout
 
+block scripts
+  script(src='/javascripts/generation.js')
+
 block content
   h1= title
   p Welcome to #{title}
+
+  div
+    label
+      | App Name:
+      input(id='appName')
+
+  div
+    label
+      | Package Name:
+      input(id='packageName')
+
+  div
+    input(type='submit', value='Go', id='generate-app')
