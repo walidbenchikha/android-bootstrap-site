@@ -41,9 +41,19 @@ exports.index = function(req, res) {
     // Copy the files to temp directory. 
     wrench.copyDirSyncRecursive(sourceDir, destDir);
 
-    var newSourceDirectory = destDir + "app/src/main/java/" + getNewFilePath(packageName); 
+    var newPathChunk = getNewFilePath(packageName);
+
+    var newSourceDirectory = destDir + "app/src/main/java/" + newPathChunk; 
     console.log("Creating new source directory at: " + newSourceDirectory);
     wrench.mkdirSyncRecursive(newSourceDirectory); 
+
+    var newUnitTestDirectory = destDir + "app/src/test/java/" + newPathChunk; 
+    console.log("Creating new source directory at: " + newUnitTestDirectory);
+    wrench.mkdirSyncRecursive(newUnitTestDirectory); 
+
+    var newIntegrationTestDirectory = destDir + "integration-tests/src/main/java/" + newPathChunk; 
+    console.log("Creating new integration tests directory at: " + newIntegrationTestDirectory);
+    wrench.mkdirSyncRecursive(newIntegrationTestDirectory);     
 
     res.send("done");
     return;
