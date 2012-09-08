@@ -7,12 +7,13 @@ var wrench = require('wrench'),
 */
 exports.index = function(req, res) {
 
-  console.log(process.env.PWD);
+    console.log(process.env.PWD);
+    console.log(process.env.TMPDIR);
+
     
     // console.log(__dirname);
     // console.log(process.env);
-    // res.json(200, { message : "ok" });
-    // return; 
+    //quit(res);
 
     var appName = req.query.appName;
     var packageName = req.query.packageName;
@@ -20,7 +21,7 @@ exports.index = function(req, res) {
     console.log("App Name:" + appName);
     console.log("Package Name:" + packageName);
 
-    // Steps
+
     // 1. Create a temporary file location. 
     // 2. Rename the directories accordingly. 
     // 3. Loop over all the files and perform replacements. 
@@ -28,13 +29,21 @@ exports.index = function(req, res) {
     // 5. Delete the temporary file. 
     // 6. All Done. 
 
-    var destDir = process.env.PWD + '/android-bootstrap';
-    console.log("destDir: " + destDir);
+    // Android Bootstrap ource directory
+    var sourceDir = process.env.PWD + '/android-bootstrap';
+    
+    // Temporary locationwhere the users project will be generated.
+    var destDir = process.env.TMPDIR + packageName + "/"; 
 
-    // Copy the files. 
-    // TODO: Uncopy once the files are in the system.
-    //wrench.copyDirSyncRecursive(process.env.PWD + '/../android-bootstrap', destDir);
+    console.log("sourceDir: " + sourceDir);
+    console.log("destDir: " + destDir); 
 
+    // Copy the files to temp directory. 
+    wrench.copyDirSyncRecursive(sourceDir, destDir);
+
+    
+    res.send("Done");
+    return;
 
 
     var files = []; 
@@ -73,7 +82,7 @@ exports.index = function(req, res) {
     
 }
 
-function generateFile(file, packageName, appName) {
+function generateFile(file, packageName, appName, callback) {
 
   var stats = fs.lstatSync(file);
   if(!stats.isDirectory()) { // Only work with files, not directories .  
@@ -92,6 +101,7 @@ function generateFile(file, packageName, appName) {
           // Finally all done doing replacing, save this bad mother.
           // TODO: Save the file in the new location. 
           renderFileContent(data, getBootstrappedFileName(file, packageName) );
+          //callback(tempFolderName); 
         } else {
           console.error(err);
           throw err;
