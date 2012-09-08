@@ -1,18 +1,24 @@
 var wrench = require('wrench'),
     util = require('util'),
-    spawn = require('child_process').spawn;
+    spawn = require('child_process').spawn,
+    fs = require('fs');
 /*
  * Project generator route. 
 */
 exports.index = function(req, res) {
 
-    // TODO: The below variables do not work yet. Not sure why. Need to investigate. 
-    var appName = req.params.appName;
-    var packageName = req.params.packageName;
+  console.log(process.env.PWD);
+    
+    // console.log(__dirname);
+    // console.log(process.env);
+    // res.json(200, { message : "ok" });
+    // return; 
+
+    var appName = req.query.appName;
+    var packageName = req.query.packageName;
 
     console.log("App Name:" + appName);
     console.log("Package Name:" + packageName);
-
 
     // Steps
     // 1. Create a temporary file location. 
@@ -22,7 +28,8 @@ exports.index = function(req, res) {
     // 5. Delete the temporary file. 
     // 6. All Done. 
 
-    var destDir = process.env.PWD + '/../android-bootstrap-2';
+    var destDir = process.env.PWD + '/android-bootstrap';
+    console.log("destDir: " + destDir);
 
     // Copy the files. 
     // TODO: Uncopy once the files are in the system.
@@ -38,14 +45,15 @@ exports.index = function(req, res) {
 
       if(error) {
         res.json(500, { err : error });
+        throw err; 
 
       } else {
 
         if(curFiles) {
           
           curFiles.forEach(function(currentFile){
-            // Process and rename files
-            console.log(currentFile);
+            // Generate the new file with proper namespace/etc
+            generateFile(destDir + '/' + currentFile, packageName, appName); 
           });
 
         } else {
@@ -65,11 +73,40 @@ exports.index = function(req, res) {
     
 }
 
+function generateFile(file, packageName, appName) {
+
+  var stats = fs.lstatSync(file);
+  if(!stats.isDirectory()) { // Only work with files, not directories .  
+    // Must include the encoding otherwise the raw buffer will
+    // be returned as the data.
+    fs.readFile(file, 'utf-8', function(err, data) {
+        
+        //console.log("Current File: " + file);
+        if(!err) {
+          console.log("File: " + file);
+          // Sure, we could chain these, but this is easier to read.
+          data = replacePackageName(data, packageName);
+          data = replaceAuthToken(data, packageName);
+          data = replaceAppName(data, packageName);
+
+          // Finally all done doing replacing, save this bad mother.
+          // TODO: Save the file in the new location. 
+          renderFileContent(data, getBootstrappedFileName(file, packageName) );
+        } else {
+          console.error(err);
+          throw err;
+        }
+
+    });
+  }
+}
+
 /*
  * Accepts a file and then renders the contents of the file back out with the appropriate 
  */
-function renderFileContent(pathToFile) {
-
+function renderFileContent(content, path) {
+  console.log(path);
+  // TODO: use wrech to write the recursive file path, then render the file. 
 }
 
 /*
@@ -104,4 +141,42 @@ function sendZipToResponse(res, dirToZip) {
       }
   });
 
+}
+
+// Turns a package name into a file path string. 
+// Example: com.foo.bar.bang turns into com\foo\bar\bang
+function getNewFilePath(newPackageName) {
+  return newPackageName.split('.').join('/'); 
+}
+
+function getOldFilePath() {
+  return "com.donnfelker.android.bootstrap".split('.').join('/'); 
+}
+
+// Takes the old boostrap file name and returns the new file name
+// that is created via the transform from the new package name. 
+function getBootstrappedFileName(bootstrapFileName, newPackageName) {
+  return bootstrapFileName.replace( getOldFilePath(), getNewFilePath(newPackageName) );
+}
+
+function replacePackageName(fileContents, newPackageName) {
+  var BOOTSTRAP_PACKAGE_NAME = "com.donnfelker.android.bootstrap"; // replace all needs a regex with the /g (global) modifier
+  var packageNameRegExp = new RegExp(BOOTSTRAP_PACKAGE_NAME, 'g');
+          
+  // Replace package name
+  return fileContents.replace(packageNameRegExp, newPackageName);
+}
+
+function replaceAuthToken(fileContents, newPackageName) {
+  var BOOTSTRAP_TOKEN = "com.androidbootstrap";
+  var tokenRegExp = new RegExp(BOOTSTRAP_TOKEN, 'g'); // global search
+
+  return fileContents.replace( tokenRegExp, newPackageName );
+}
+
+function replaceAppName(fileContents, newAppName) {
+  var APP_NAME = "Android Bootstrap";
+  var nameRegExp = new RegExp(APP_NAME, 'g'); // global search
+
+  return fileContents.replace(nameRegExp, newAppName);
 }

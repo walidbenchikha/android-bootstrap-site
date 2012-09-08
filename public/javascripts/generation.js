@@ -6,7 +6,7 @@ $(function(){
     var packageName = $("#packageName");
 
     if(appName && appName.val().length > 0 && packageName && packageName.val().length > 0 && packageNameIsDomain(packageName.val())) {
-      $(location).attr('href', '/generate');
+      $(location).attr('href', '/generate?appName=' + appName.val() + "&packageName=" + packageName.val());
     } else {
       alert("Please enter a valid package name and app name.");
     }
