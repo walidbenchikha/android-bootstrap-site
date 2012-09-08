@@ -33,7 +33,7 @@ exports.index = function(req, res) {
     var sourceDir = process.env.PWD + '/android-bootstrap';
     
     // Temporary locationwhere the users project will be generated.
-    var destDir = process.env.TMPDIR + packageName + "/"; 
+    var destDir = process.env.TMPDIR + packageName; 
 
     console.log("sourceDir: " + sourceDir);
     console.log("destDir: " + destDir); 
@@ -41,10 +41,7 @@ exports.index = function(req, res) {
     // Copy the files to temp directory. 
     wrench.copyDirSyncRecursive(sourceDir, destDir);
 
-    createSourceDirectories(destDir, packageName);
-
-    res.send("done");
-    return;
+    //createSourceDirectories(destDir, packageName);
 
     var files = []; 
     wrench.readdirRecursive(destDir, function(error, curFiles) {
@@ -59,20 +56,27 @@ exports.index = function(req, res) {
       } else {
 
         if(curFiles) {
-          
+
           curFiles.forEach(function(currentFile){
-            // Generate the new file with proper namespace/etc
-            generateFile(destDir + '/' + currentFile, packageName, appName); 
-
-            //console.log("Removing temporary work directory.");
-            // Clean up - delete all the files we were just working with. 
-            //wrench.rmdirSyncRecursive(destDir, false);
-
+            generateFile(destDir + "/" + currentFile, packageName, appName);  // Generate the new file with proper namespace/etc
           });
 
         } else {
-          // Both curFiles and error will be null when the fiel processing is complete. 
-          res.json(200, { message: "done"});            
+          // Both curFiles and error will be null when the file processing is complete. 
+          
+          // NOTE: Might need to add a settimeout to this badboy to execute in the future because some 
+          // call backs might not be done executing yet. 
+          createSourceDirectories(destDir, packageName);
+          copySourceDirectories(sourceDir, destDir, packageName); 
+
+          // TODO: remove the old bootstrap source, unit-test and integration-test folders that are not valid anymore.
+          //console.log("Removing temporary work directory.");
+          // Clean up - delete all the files we were just working with. 
+          //wrench.rmdirSyncRecursive(destDir, false);
+
+
+          res.json(200, { message: "done"});
+
         }
 
         //res.json(200, { message: "done"});  
@@ -92,54 +96,65 @@ function createSourceDirectories(destDir, packageName) {
 
   var newPathChunk = getNewFilePath(packageName);
 
-  var newSourceDirectory = destDir + "app/src/main/java/" + newPathChunk; 
+  var newSourceDirectory = destDir + "/app/src/main/java/" + newPathChunk; 
   console.log("Creating new source directory at: " + newSourceDirectory);
   wrench.mkdirSyncRecursive(newSourceDirectory); 
 
-  var newUnitTestDirectory = destDir + "app/src/test/java/" + newPathChunk; 
+  var newUnitTestDirectory = destDir + "/app/src/test/java/" + newPathChunk; 
   console.log("Creating new source directory at: " + newUnitTestDirectory);
   wrench.mkdirSyncRecursive(newUnitTestDirectory); 
 
-  var newIntegrationTestDirectory = destDir + "integration-tests/src/main/java/" + newPathChunk; 
+  var newIntegrationTestDirectory = destDir + "/integration-tests/src/main/java/" + newPathChunk; 
   console.log("Creating new integration tests directory at: " + newIntegrationTestDirectory);
   wrench.mkdirSyncRecursive(newIntegrationTestDirectory);     
 }
 
-function generateFile(file, packageName, appName, callback) {
+function copySourceDirectories(sourceDir, destDir, packageName) {
+
+  console.log(sourceDir);
+  console.log(destDir);
+  console.log(packageName);
+  
+  var newPathChunk = getNewFilePath(packageName);
+
+  var oldSourceDir = sourceDir  +  "/app/src/main/java/com/donnfelker/android/bootstrap";  
+  var newSourceDir = destDir    +  "/app/src/main/java/" + newPathChunk; 
+  console.log("Creating new source directory at: " + newSourceDir);
+  wrench.copyDirSyncRecursive(oldSourceDir, newSourceDir); 
+
+  var oldUnitTestDir = sourceDir + "/app/src/test/java/com/donnfelker/android/bootstrap";
+  var newUnitTestDir = destDir + "/app/src/test/java/" + newPathChunk; 
+  console.log("Creating new source directory at: " + newUnitTestDir);
+  wrench.copyDirSyncRecursive(oldUnitTestDir, newUnitTestDir); 
+
+  var oldIntegrationTestDir = sourceDir + "/integration-tests/src/main/java/com/donnfelker/android/bootstrap";
+  var newIntegrationTestDir = destDir + "/integration-tests/src/main/java/" + newPathChunk; 
+  console.log("Creating new integration tests directory at: " + newIntegrationTestDir);
+  wrench.copyDirSyncRecursive(oldIntegrationTestDir, newIntegrationTestDir);     
+}
+
+function generateFile(file, packageName, appName) {
 
   var stats = fs.lstatSync(file);
   if(!stats.isDirectory()) { // Only work with files, not directories .  
+    
     // Must include the encoding otherwise the raw buffer will
     // be returned as the data.
-    fs.readFile(file, 'utf-8', function(err, data) {
+    var data = fs.readFileSync(file, 'utf-8');
         
-        //console.log("Current File: " + file);
-        if(!err) {
-          console.log("File: " + file);
-          // Sure, we could chain these, but this is easier to read.
-          data = replacePackageName(data, packageName);
-          data = replaceAuthToken(data, packageName);
-          data = replaceAppName(data, packageName);
+    //console.log("Current File: " + file);
+  
+    console.log("File: " + file);
+    // Sure, we could chain these, but this is easier to read.
+    data = replacePackageName(data, packageName);
+    data = replaceAuthToken(data, packageName);
+    data = replaceAppName(data, packageName);
 
-          // Finally all done doing replacing, save this bad mother.
-          // TODO: Save the file in the new location. 
-          renderFileContent(data, getBootstrappedFileName(file, packageName) );
-          //callback(tempFolderName); 
-        } else {
-          console.error(err);
-          throw err;
-        }
-
-    });
+    // Finally all done doing replacing, save this bad mother.
+    // TODO: Save the file in the new location. 
+    fs.writeFileSync(file, data); 
+    
   }
-}
-
-/*
- * Accepts a file and then renders the contents of the file back out with the appropriate 
- */
-function renderFileContent(content, path) {
-  console.log(path);
-  // TODO: use wrech to write the recursive file path, then render the file. 
 }
 
 /*
