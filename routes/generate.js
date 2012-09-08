@@ -41,10 +41,12 @@ exports.index = function(req, res) {
     // Copy the files to temp directory. 
     wrench.copyDirSyncRecursive(sourceDir, destDir);
 
-    
-    res.send("Done");
-    return;
+    var newSourceDirectory = destDir + "app/src/main/java/" + getNewFilePath(packageName); 
+    console.log("Creating new source directory at: " + newSourceDirectory);
+    wrench.mkdirSyncRecursive(newSourceDirectory); 
 
+    res.send("done");
+    return;
 
     var files = []; 
     wrench.readdirRecursive(destDir, function(error, curFiles) {
