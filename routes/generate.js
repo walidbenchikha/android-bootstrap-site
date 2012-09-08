@@ -170,6 +170,7 @@ function generateFile(file, packageName, appName) {
     data = replacePackageName(data, packageName);
     data = replaceAuthToken(data, packageName);
     data = replaceAppName(data, appName);
+    data = replaceHyphenatedNames(data, packageName)
 
     // Finally all done doing replacing, save this bad mother.
     // TODO: Save the file in the new location. 
@@ -249,4 +250,11 @@ function replaceAppName(fileContents, newAppName) {
   var nameRegExp = new RegExp(APP_NAME, 'g'); // global search
 
   return fileContents.replace(nameRegExp, newAppName);
+}
+
+function replaceHyphenatedNames(fileContents, newPackageName) {
+  var newHyphenatedName = newPackageName.toLowerCase().split('.').join('-');
+  var hyphenatedRegExp = new RegExp("android-bootstrap", 'g'); // global search
+
+  return fileContents.replace(hyphenatedRegExp, newHyphenatedName);
 }
