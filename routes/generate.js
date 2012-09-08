@@ -41,19 +41,7 @@ exports.index = function(req, res) {
     // Copy the files to temp directory. 
     wrench.copyDirSyncRecursive(sourceDir, destDir);
 
-    var newPathChunk = getNewFilePath(packageName);
-
-    var newSourceDirectory = destDir + "app/src/main/java/" + newPathChunk; 
-    console.log("Creating new source directory at: " + newSourceDirectory);
-    wrench.mkdirSyncRecursive(newSourceDirectory); 
-
-    var newUnitTestDirectory = destDir + "app/src/test/java/" + newPathChunk; 
-    console.log("Creating new source directory at: " + newUnitTestDirectory);
-    wrench.mkdirSyncRecursive(newUnitTestDirectory); 
-
-    var newIntegrationTestDirectory = destDir + "integration-tests/src/main/java/" + newPathChunk; 
-    console.log("Creating new integration tests directory at: " + newIntegrationTestDirectory);
-    wrench.mkdirSyncRecursive(newIntegrationTestDirectory);     
+    createSourceDirectories(destDir, packageName);
 
     res.send("done");
     return;
@@ -75,6 +63,11 @@ exports.index = function(req, res) {
           curFiles.forEach(function(currentFile){
             // Generate the new file with proper namespace/etc
             generateFile(destDir + '/' + currentFile, packageName, appName); 
+
+            //console.log("Removing temporary work directory.");
+            // Clean up - delete all the files we were just working with. 
+            //wrench.rmdirSyncRecursive(destDir, false);
+
           });
 
         } else {
@@ -92,6 +85,24 @@ exports.index = function(req, res) {
     });
 
     
+}
+
+// Creates the various new folder structures needed for the users new project. 
+function createSourceDirectories(destDir, packageName) {
+
+  var newPathChunk = getNewFilePath(packageName);
+
+  var newSourceDirectory = destDir + "app/src/main/java/" + newPathChunk; 
+  console.log("Creating new source directory at: " + newSourceDirectory);
+  wrench.mkdirSyncRecursive(newSourceDirectory); 
+
+  var newUnitTestDirectory = destDir + "app/src/test/java/" + newPathChunk; 
+  console.log("Creating new source directory at: " + newUnitTestDirectory);
+  wrench.mkdirSyncRecursive(newUnitTestDirectory); 
+
+  var newIntegrationTestDirectory = destDir + "integration-tests/src/main/java/" + newPathChunk; 
+  console.log("Creating new integration tests directory at: " + newIntegrationTestDirectory);
+  wrench.mkdirSyncRecursive(newIntegrationTestDirectory);     
 }
 
 function generateFile(file, packageName, appName, callback) {
