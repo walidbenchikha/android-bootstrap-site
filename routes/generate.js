@@ -68,12 +68,9 @@ exports.index = function(req, res) {
           // call backs might not be done executing yet. 
           createSourceDirectories(destDir, packageName);
           copySourceDirectories(sourceDir, destDir, packageName); 
-
-          // TODO: remove the old bootstrap source, unit-test and integration-test folders that are not valid anymore.
-          //console.log("Removing temporary work directory.");
-          // Clean up - delete all the files we were just working with. 
+          removeBootstrapDirectories(destDir); 
+          
           //wrench.rmdirSyncRecursive(destDir, false);
-
 
           res.json(200, { message: "done"});
 
@@ -89,6 +86,26 @@ exports.index = function(req, res) {
     });
 
     
+}
+
+function removeBootstrapDirectories(destDir) {
+
+  // TODO: remove the old bootstrap source, unit-test and integration-test folders that are not valid anymore.
+  console.log("Removing temporary work directories.");
+  
+  // Clean up - delete all the files we were just working with. 
+  var bootstrapSourceDir = destDir + "/app/src/main/java/com/donnfelker"; 
+  var bootstrapUnitTestDir = destDir + "/app/src/test/java/com/donnfelker"; 
+  var integrationTestDir = destDir +  "/integration-tests/src/main/java/com/donnfelker"; 
+
+  console.log("Removing: " + bootstrapSourceDir);
+  console.log("Removing: " + bootstrapUnitTestDir);
+  console.log("Removing: " + integrationTestDir);
+  
+  wrench.rmdirSyncRecursive(bootstrapSourceDir, false);
+  wrench.rmdirSyncRecursive(bootstrapUnitTestDir, false);
+  wrench.rmdirSyncRecursive(integrationTestDir, false);
+
 }
 
 // Creates the various new folder structures needed for the users new project. 
