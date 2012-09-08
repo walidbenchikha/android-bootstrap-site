@@ -64,15 +64,19 @@ exports.index = function(req, res) {
         } else {
           // Both curFiles and error will be null when the file processing is complete. 
           
-          // NOTE: Might need to add a settimeout to this badboy to execute in the future because some 
-          // call backs might not be done executing yet. 
+          // TODO: Need a way to determine when call backs are done executing. Then, and only then, perform the copying
+          // and the file deleting. 
           createSourceDirectories(destDir, packageName);
           copySourceDirectories(sourceDir, destDir, packageName); 
           removeBootstrapDirectories(destDir); 
           
+          sendZipToResponse(res, destDir, function() {
+            wrench.rmdirSyncRecursive(destDir, false);            
+          });
+
           //wrench.rmdirSyncRecursive(destDir, false);
 
-          res.json(200, { message: "done"});
+          //res.json(200, { message: "done"});
 
         }
 
@@ -165,7 +169,7 @@ function generateFile(file, packageName, appName) {
     // Sure, we could chain these, but this is easier to read.
     data = replacePackageName(data, packageName);
     data = replaceAuthToken(data, packageName);
-    data = replaceAppName(data, packageName);
+    data = replaceAppName(data, appName);
 
     // Finally all done doing replacing, save this bad mother.
     // TODO: Save the file in the new location. 
@@ -178,7 +182,7 @@ function generateFile(file, packageName, appName) {
  * Sends a directory to the steam as a zip file. 
  * Source: http://stackoverflow.com/a/6837589/5210
  */
-function sendZipToResponse(res, dirToZip) {
+function sendZipToResponse(res, dirToZip, fn) {
 
   // Options -r recursive - redirect to stdout
   var zip = spawn('zip', ['-rD', '-', dirToZip]);
@@ -202,6 +206,7 @@ function sendZipToResponse(res, dirToZip) {
           console.log('zip process exited with code ' + code);
           res.end();
       } else {
+          fn(); 
           res.end();
       }
   });
