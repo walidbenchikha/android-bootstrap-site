@@ -34,7 +34,7 @@ exports.index = function(req, res) {
     var sourceDir = process.env.PWD + '/android-bootstrap';
     
     // Temporary locationwhere the users project will be generated.
-    var destDir = process.env.TMPDIR + packageName; 
+    var destDir = process.env.PWD + '/tmp/' + packageName; 
 
     console.log("sourceDir: " + sourceDir);
     console.log("destDir: " + destDir); 
