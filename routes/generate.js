@@ -1,7 +1,8 @@
 var wrench = require('wrench'),
     util = require('util'),
     spawn = require('child_process').spawn,
-    fs = require('fs');
+    fs = require('fs'),
+    async = require('async');
 /*
  * Project generator route. 
 */
@@ -41,55 +42,46 @@ exports.index = function(req, res) {
     // Copy the files to temp directory. 
     wrench.copyDirSyncRecursive(sourceDir, destDir);
 
-    //createSourceDirectories(destDir, packageName);
+    var theFiles = wrench.readdirSyncRecursive(destDir);
+    console.log(theFiles);
 
-    var files = []; 
-    wrench.readdirRecursive(destDir, function(error, curFiles) {
-      // Callback receives the files in the currently recursed directory. 
-      // When no more dirs are left, callback is called with null for all arguments. 
-      // SRC: https://github.com/ryanmcgrath/wrench-js/blob/master/lib/wrench.js
+    var callItems = [];
 
-      if(error) {
-        res.json(500, { err : error });
-        throw err; 
 
+    theFiles.forEach(function(currentFile) {
+      var genFileFunc = generateFileFunc(destDir + "/" + currentFile, packageName, appName);
+      callItems.push(genFileFunc);
+
+    });
+
+    async.parallel(callItems, function(err, results) {
+      
+      if(err) {
+        console.error("**** ERROR ****");
       } else {
-
-        if(curFiles) {
-
-          curFiles.forEach(function(currentFile){
-            generateFile(destDir + "/" + currentFile, packageName, appName);  // Generate the new file with proper namespace/etc
-          });
-
-        } else {
-          // Both curFiles and error will be null when the file processing is complete. 
+        
+        // Now, all items have been executed, perform the copying/etc.
+        createSourceDirectories(destDir, packageName);
+        copySourceDirectories(destDir, packageName); 
+        //removeBootstrapDirectories(destDir); 
           
-          // TODO: Need a way to determine when call backs are done executing. Then, and only then, perform the copying
-          // and the file deleting. 
-          createSourceDirectories(destDir, packageName);
-          copySourceDirectories(sourceDir, destDir, packageName); 
-          removeBootstrapDirectories(destDir); 
-          
-          sendZipToResponse(res, destDir, function() {
-            wrench.rmdirSyncRecursive(destDir, false);            
-          });
+        sendZipToResponse(res, destDir, function() {
+          //wrench.rmdirSyncRecursive(destDir, false);            
+        });
 
           //wrench.rmdirSyncRecursive(destDir, false);
 
-          //res.json(200, { message: "done"});
-
-        }
-
-        //res.json(200, { message: "done"});  
-        // TODO: When done, zip the file and send it to the user. 
-        // TODO: Move it to S3?
-        // TODO: Then delete that file. 
-
       }
-      
     });
 
-    
+    // res.json(200, { message : "done"});
+    // return;     
+}
+
+function generateFileFunc(file, packageName, appName) {
+  return function(callback) {
+    generateFile(file, packageName, appName, callback);
+  }
 }
 
 function removeBootstrapDirectories(destDir) {
@@ -130,34 +122,39 @@ function createSourceDirectories(destDir, packageName) {
   wrench.mkdirSyncRecursive(newIntegrationTestDirectory);     
 }
 
-function copySourceDirectories(sourceDir, destDir, packageName) {
+function copySourceDirectories(destDir, packageName) {
 
-  console.log(sourceDir);
   console.log(destDir);
   console.log(packageName);
   
   var newPathChunk = getNewFilePath(packageName);
 
-  var oldSourceDir = sourceDir  +  "/app/src/main/java/com/donnfelker/android/bootstrap";  
+  var oldSourceDir = destDir  +  "/app/src/main/java/com/donnfelker/android/bootstrap";  
   var newSourceDir = destDir    +  "/app/src/main/java/" + newPathChunk; 
-  console.log("Creating new source directory at: " + newSourceDir);
+  console.log("Copying source from" + oldSourceDir + " to directory " + newSourceDir);
   wrench.copyDirSyncRecursive(oldSourceDir, newSourceDir); 
 
-  var oldUnitTestDir = sourceDir + "/app/src/test/java/com/donnfelker/android/bootstrap";
+  var oldUnitTestDir = destDir + "/app/src/test/java/com/donnfelker/android/bootstrap";
   var newUnitTestDir = destDir + "/app/src/test/java/" + newPathChunk; 
-  console.log("Creating new source directory at: " + newUnitTestDir);
+  console.log("Copying source from" + oldUnitTestDir + " to directory " + newUnitTestDir);
   wrench.copyDirSyncRecursive(oldUnitTestDir, newUnitTestDir); 
 
-  var oldIntegrationTestDir = sourceDir + "/integration-tests/src/main/java/com/donnfelker/android/bootstrap";
+  var oldIntegrationTestDir = destDir + "/integration-tests/src/main/java/com/donnfelker/android/bootstrap";
   var newIntegrationTestDir = destDir + "/integration-tests/src/main/java/" + newPathChunk; 
-  console.log("Creating new integration tests directory at: " + newIntegrationTestDir);
+  console.log("Copying source from" + oldIntegrationTestDir + " to directory " + newIntegrationTestDir);
   wrench.copyDirSyncRecursive(oldIntegrationTestDir, newIntegrationTestDir);     
 }
 
-function generateFile(file, packageName, appName) {
+String.prototype.endsWith = function(suffix) {
+    return this.indexOf(suffix, this.length - suffix.length) !== -1;
+};
+
+function generateFile(file, packageName, appName, callback) {
 
   var stats = fs.lstatSync(file);
-  if(!stats.isDirectory()) { // Only work with files, not directories .  
+  if(!stats.isDirectory() && !file.endsWith(".png")) { 
+    // Only work with text files, no directories or png files.  
+    // Above == terrible code, but for android-bootstrap, it works. Pragmatic & KISS. FTW.
     
     // Must include the encoding otherwise the raw buffer will
     // be returned as the data.
@@ -175,8 +172,10 @@ function generateFile(file, packageName, appName) {
     // Finally all done doing replacing, save this bad mother.
     // TODO: Save the file in the new location. 
     fs.writeFileSync(file, data); 
-    
   }
+
+   // Call back to async lib. 
+    callback(null, file);
 }
 
 /*
@@ -207,8 +206,8 @@ function sendZipToResponse(res, dirToZip, fn) {
           console.log('zip process exited with code ' + code);
           res.end();
       } else {
-          fn(); 
           res.end();
+          fn(); 
       }
   });
 
