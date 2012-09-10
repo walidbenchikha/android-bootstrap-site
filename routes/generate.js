@@ -63,13 +63,11 @@ exports.index = function(req, res) {
         // Now, all items have been executed, perform the copying/etc.
         createSourceDirectories(destDir, packageName);
         copySourceDirectories(destDir, packageName); 
-        //removeBootstrapDirectories(destDir); 
+        removeBootstrapDirectories(destDir); 
           
         sendZipToResponse(res, destDir, function() {
-          //wrench.rmdirSyncRecursive(destDir, false);            
+          wrench.rmdirSyncRecursive(destDir, false);            
         });
-
-          //wrench.rmdirSyncRecursive(destDir, false);
 
       }
     });
