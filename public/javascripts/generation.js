@@ -16,7 +16,7 @@ $(function(){
 });
 
 function packageNameIsDomain(packageNameValue) {
-  // Validate a domain name
-  var domainRegEx = new RegExp("^[a-z0-9]+([\.]{1}[a-z0-9]+)?([\.]{1})[a-z0-9]+$"); 
+  // Validate a package name. Source: http://stackoverflow.com/a/10428964/5210
+  var domainRegEx = new RegExp("^([a-zA-Z_]{1}[a-zA-Z0-9_]*(\\.[a-zA-Z_]{1}[a-zA-Z0-9_]*)*)?$"); 
   return domainRegEx.test(packageNameValue);
 }

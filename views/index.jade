@@ -20,11 +20,14 @@ block content
         h5 or
         h5 Generate Your App Now
       div
-        input(id='appName', type='text', placeholder="Application Name")
-        input(id='packageName', type='text', placeholder="Package Name")    
+        input(id='appName', type='text', placeholder="Your App Name")
+        input(id='packageName', type='text', placeholder="com.yourapp.package.name")    
 
       div
         input(type='submit', value='Generate Your App', id='generate-app', class='btn btn-primary btn-large')
+
+      div.alert.alert-error.alert-block(style="margin-top:10px")
+         <b>Note:</b> Currently application generation is <i>very beta</i>.
 
   div.row
     div.span4
