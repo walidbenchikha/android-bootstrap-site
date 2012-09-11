@@ -6,30 +6,26 @@ var wrench = require('wrench'),
     zip = require("node-native-zip");
 /*
  * Project generator route. 
+ * This entire route is super brute force and rather naive. However, it works and is easy to follow. 
+ * TODO: Possible improvements include doing more async calls with the fs module since this uses the async.js
+ * lib it shouldn't be too bad to impelement. 
 */
 exports.index = function(req, res) {
 
-    console.log(process.env.PWD);
-    console.log(process.env.TMPDIR);
+    // 1. Create a temporary file(s) location. 
+    // 2. Rename the directories accordingly. 
+    // 3. Loop over all the files and perform replacements. 
+    // 4. Zip up the content & Send to the output stream
+    // 5. Delete the temporary file(s). 
+    // 6. All Done - Do some 12 ounce curls. 
 
-    
-    // console.log(__dirname);
-    // console.log(process.env);
-    //quit(res);
+    console.log(process.env.PWD);
 
     var appName = req.query.appName;
     var packageName = req.query.packageName;
 
     console.log("App Name:" + appName);
     console.log("Package Name:" + packageName);
-
-
-    // 1. Create a temporary file location. 
-    // 2. Rename the directories accordingly. 
-    // 3. Loop over all the files and perform replacements. 
-    // 4. Zip up the file & Send to the output stream
-    // 5. Delete the temporary file. 
-    // 6. All Done. 
 
     // Android Bootstrap ource directory
     var sourceDir = process.env.PWD + '/android-bootstrap';
@@ -67,12 +63,9 @@ exports.index = function(req, res) {
         removeBootstrapDirectories(destDir); 
         
         sendContentAsZip(destDir, res);
-        
-      }
-    });
 
-    // res.json(200, { message : "done"});
-    // return;     
+      }
+    }); 
 }
 
 function sendContentAsZip(destDir, res) {
@@ -207,7 +200,6 @@ function generateFile(file, packageName, appName, callback) {
     data = replaceHyphenatedNames(data, packageName)
 
     // Finally all done doing replacing, save this bad mother.
-    // TODO: Save the file in the new location. 
     fs.writeFileSync(file, data); 
   }
 
@@ -215,40 +207,6 @@ function generateFile(file, packageName, appName, callback) {
     callback(null, file);
 }
 
-/*
- * Sends a directory to the steam as a zip file. 
- * Source: http://stackoverflow.com/a/6837589/5210
- */
-function sendZipToResponse(res, dirToZip, fn) {
-
-  // Options -r recursive - redirect to stdout
-  var zip = spawn('zip', ['-rD', '-', dirToZip]);
-
-  res.contentType('zip');
-
-  // Keep writing stdout to res
-  zip.stdout.on('data', function (data) {
-      res.write(data);
-  });
-
-  zip.stderr.on('data', function (data) {
-      // Uncomment to see the files being added
-      console.log('zip stderr: ' + data);
-  });
-
-  // End the response on zip exit
-  zip.on('exit', function (code) {
-      if(code !== 0) {
-          res.statusCode = 500;
-          console.log('zip process exited with code ' + code);
-          res.end();
-      } else {
-          res.end();
-          fn(); 
-      }
-  });
-
-}
 
 // Turns a package name into a file path string. 
 // Example: com.foo.bar.bang turns into com\foo\bar\bang
