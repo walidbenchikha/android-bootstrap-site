@@ -2,7 +2,8 @@ var wrench = require('wrench'),
     util = require('util'),
     spawn = require('child_process').spawn,
     fs = require('fs'),
-    async = require('async');
+    async = require('async'),
+    zip = require("node-native-zip");
 /*
  * Project generator route. 
 */
@@ -64,16 +65,54 @@ exports.index = function(req, res) {
         createSourceDirectories(destDir, packageName);
         copySourceDirectories(destDir, packageName); 
         removeBootstrapDirectories(destDir); 
-          
-        sendZipToResponse(res, destDir, function() {
-          wrench.rmdirSyncRecursive(destDir, false);            
-        });
-
+        
+        sendContentAsZip(destDir, res);
+        
       }
     });
 
     // res.json(200, { message : "done"});
     // return;     
+}
+
+function sendContentAsZip(destDir, res) {
+  
+  var fileObjects = getFileObjectsFrom(destDir, wrench.readdirSyncRecursive(destDir));
+  
+  var archive = new zip();
+  archive.addFiles(fileObjects, function(err) {
+    if(err) {
+      console.log(err);
+      res.statusCode = 500;
+      res.end(); 
+    } else {
+      
+      archive.toBuffer(function(buff) {
+        
+        res.contentType('zip');
+        res.setHeader('Content-disposition', 'attachment; filename=android-bootstrap.zip');
+        res.send(buff);
+        res.end();        
+
+        wrench.rmdirSyncRecursive(destDir, false)
+      }); 
+
+      
+    }
+      
+  });
+ 
+}
+
+function getFileObjectsFrom(destDir, files) {
+  var fileObjs = []
+  for(var i=0; i<files.length;i++) {
+    var filePath = destDir + "/" + files[i];
+    var stats = fs.lstatSync(filePath);
+    if(!stats.isDirectory())
+      fileObjs.push({ name: files[i], path: filePath });
+  }
+  return fileObjs;
 }
 
 function generateFileFunc(file, packageName, appName) {
