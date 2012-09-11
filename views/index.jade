@@ -4,18 +4,35 @@ block scripts
   script(src='/javascripts/generation.js')
 
 block content
-  h1= title
-  p Welcome to #{title}
+  div.row.well
+    div.span11
+      h1(style="text-align:center") Bootstrap your next Android Application
+    div.span7
+      img(src='/images/ab-screenshot.png')
+    
+    div.span4
+      p Android Boostrap includes a full working implementation of Fragments, Fragment Pager, Account Manager, <a href='https://github.com/jayway/maven-android-plugin'>android-maven-plugin</a>, <a href='http://roboguice.org'>RoboGuice 2</a>, <a href="http://www.actionbarsherlock.com">ActionBarSherlock 4</a>, <a href='http://viewpagerindicator.com/'>ViewPagerIndicator</a>, <a href=https://github.com/kevinsawicki/http-request'>http-request</a>, <a href='http://code.google.com/p/google-gson/'>GSON</a>, <a href='http://code.google.com/p/robotium/'>Robotium</a> for integration testing, API Consumption with an API on <a href='http://www.parse.com'>Parse.com</a> and much more.
 
-  div
-    label
-      | App Name:
-      input(id='appName')
+      div
+        h3 Get Started Now
+        h5 Download the Source
+        a(href='http://www.github.com/donnfelker/android-bootstrap') Download from GitHub
+        h5 or
+        h5 Generate Your App Now
+      div
+        input(id='appName', type='text', placeholder="Application Name")
+        input(id='packageName', type='text', placeholder="Package Name")    
 
-  div
-    label
-      | Package Name:
-      input(id='packageName')
+      div
+        input(type='submit', value='Generate Your App', id='generate-app', class='btn btn-primary btn-large')
 
-  div
-    input(type='submit', value='Go', id='generate-app')
+  div.row
+    div.span4
+        h4 Why was this developed? 
+        p To help get new Android applications off the ground quickly with minimal effort. To get an application built with this toolset could easily take 1-3 weeks with debugging, hacking and experience level. Android Bootsrap and its app generator eliminate this work.
+    div.span4 
+        h4 What does app generation do?
+        p The app generation process does a brute force replace through the android-bootstrap source code and replaces build artifact names, package names and imports. It also generates the proper file structure for your package and updates account manager settings as well as build settings.
+    div.span4
+        h4 Why should I generate my app? 
+        p Because its AWEEEESSSOMMMMMEEEE!!!!! No, really, it is. Using the generator you can shave weeks of development, debugging and rid yourself of the continual face-palming that occurs during the highly error prone manual renaming process. 
