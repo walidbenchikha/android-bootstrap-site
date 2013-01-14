@@ -197,7 +197,8 @@ function generateFile(file, packageName, appName, callback) {
     data = replacePackageName(data, packageName);
     data = replaceAuthToken(data, packageName);
     data = replaceAppName(data, appName);
-    data = replaceHyphenatedNames(data, packageName)
+    data = replaceHyphenatedNames(data, packageName);
+    data = replaceProguardValues(data, packageName);
 
     // Finally all done doing replacing, save this bad mother.
     fs.writeFileSync(file, data); 
@@ -251,4 +252,11 @@ function replaceHyphenatedNames(fileContents, newPackageName) {
   var hyphenatedRegExp = new RegExp("android-bootstrap", 'g'); // global search
 
   return fileContents.replace(hyphenatedRegExp, newHyphenatedName);
+}
+
+function replaceProguardValues(fileContents, newPackageName) {
+  var newValue = newPackageName + '.'; 
+  var valueToFind = new RegExp("com.donnfelker.android.", 'g');
+
+  return fileContents.replace(valueToFind, newValue);
 }
