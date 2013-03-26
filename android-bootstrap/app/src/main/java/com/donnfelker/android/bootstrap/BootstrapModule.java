@@ -1,21 +1,61 @@
 package com.donnfelker.android.bootstrap;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Singleton;
+import android.accounts.AccountManager;
+import android.content.Context;
+
+import com.donnfelker.android.bootstrap.authenticator.BootstrapAuthenticatorActivity;
+import com.donnfelker.android.bootstrap.authenticator.LogoutService;
+import com.donnfelker.android.bootstrap.core.CheckIn;
+import com.donnfelker.android.bootstrap.core.TimerService;
+import com.donnfelker.android.bootstrap.ui.BootstrapTimerActivity;
+import com.donnfelker.android.bootstrap.ui.CarouselActivity;
+import com.donnfelker.android.bootstrap.ui.CheckInsListFragment;
+import com.donnfelker.android.bootstrap.ui.ItemListFragment;
+import com.donnfelker.android.bootstrap.ui.NewsActivity;
+import com.donnfelker.android.bootstrap.ui.NewsListFragment;
+import com.donnfelker.android.bootstrap.ui.UserActivity;
+import com.donnfelker.android.bootstrap.ui.UserListFragment;
 import com.squareup.otto.Bus;
 
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
+
 /**
- * Module for setting up custom bindings in RoboGuice.
+ * Dagger module for setting up provides statements.
+ * Register all of your entry points below.
  */
-public class BootstrapModule extends AbstractModule {
+@Module
+(
+        complete = false,
 
-    @Override
-    protected void configure() {
+        entryPoints = {
+                BootstrapApplication.class,
+                BootstrapAuthenticatorActivity.class,
+                CarouselActivity.class,
+                BootstrapTimerActivity.class,
+                CheckInsListFragment.class,
+                NewsActivity.class,
+                NewsListFragment.class,
+                UserActivity.class,
+                UserListFragment.class,
+                TimerService.class
+        }
 
-        // We want Otto to be bound as a singleton as one instance only needs
-        // to be present in this app
-        bind(Bus.class).in(Singleton.class);
+)
+public class BootstrapModule  {
 
+    @Singleton
+    @Provides
+    Bus provideOttoBus() {
+        return new Bus();
+    }
+
+    @Provides
+    @Singleton
+    LogoutService provideLogoutService(final Context context, final AccountManager accountManager) {
+        return new LogoutService(context, accountManager);
     }
 
 }

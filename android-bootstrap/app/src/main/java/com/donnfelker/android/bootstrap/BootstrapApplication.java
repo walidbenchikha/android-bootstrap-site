@@ -9,20 +9,22 @@ import android.app.Instrumentation;
 import android.content.Context;
 
 import com.github.kevinsawicki.http.HttpRequest;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
 
-import roboguice.RoboGuice;
+import dagger.ObjectGraph;
 
 /**
  * Android Bootstrap application
  */
 public class BootstrapApplication extends Application {
 
+    private static BootstrapApplication instance;
+    ObjectGraph objectGraph;
+
     /**
      * Create main application
      */
     public BootstrapApplication() {
+
         // Disable http.keepAlive on Froyo and below
         if (SDK_INT <= FROYO)
             HttpRequest.keepAlive(false);
@@ -36,14 +38,25 @@ public class BootstrapApplication extends Application {
     public BootstrapApplication(final Context context) {
         this();
         attachBaseContext(context);
+
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        setApplicationInjector(this);
+        instance = this;
+        // Perform Injection
+        objectGraph = ObjectGraph.create(getRootModule());
+        objectGraph.inject(this);
+        objectGraph.injectStatics();
+
     }
+
+    private Object getRootModule() {
+        return new RootModule();
+    }
+
 
     /**
      * Create main application
@@ -55,14 +68,14 @@ public class BootstrapApplication extends Application {
         attachBaseContext(instrumentation.getTargetContext());
     }
 
-    /**
-     * Sets the application injector. Using the {@link RoboGuice#newDefaultRoboModule} as well as a
-     * custom binding module {@link BootstrapModule} to set up your application module
-     * @param application
-     * @return
-     */
-    public static Injector setApplicationInjector(Application application) {
-        return RoboGuice.setBaseApplicationInjector(application, Stage.DEVELOPMENT, RoboGuice.newDefaultRoboModule
-                (application), new BootstrapModule());
+    public void inject(Object object)
+    {
+        objectGraph.inject(object);
+    }
+
+
+
+    public static BootstrapApplication getInstance() {
+        return instance;
     }
 }

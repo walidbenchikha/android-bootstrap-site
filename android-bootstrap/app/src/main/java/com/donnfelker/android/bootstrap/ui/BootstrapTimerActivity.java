@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.donnfelker.android.bootstrap.BootstrapApplication;
 import com.donnfelker.android.bootstrap.R;
 import com.donnfelker.android.bootstrap.core.PauseTimerEvent;
 import com.donnfelker.android.bootstrap.core.ResumeTimerEvent;
@@ -15,16 +16,16 @@ import com.donnfelker.android.bootstrap.core.StopTimerEvent;
 import com.donnfelker.android.bootstrap.core.TimerPausedEvent;
 import com.donnfelker.android.bootstrap.core.TimerService;
 import com.donnfelker.android.bootstrap.core.TimerTickEvent;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-import roboguice.inject.InjectView;
+import butterknife.InjectView;
+import butterknife.Views;
 
-public class BootstrapTimerActivity extends RoboSherlockFragmentActivity implements View.OnClickListener {
+public class BootstrapTimerActivity extends BootstrapFragmentActivity implements View.OnClickListener {
 
-    @Inject protected Bus BUS;
+    @Inject Bus BUS;
 
     @InjectView(R.id.chronometer) protected TextView chronometer;
     @InjectView(R.id.start) protected Button start;

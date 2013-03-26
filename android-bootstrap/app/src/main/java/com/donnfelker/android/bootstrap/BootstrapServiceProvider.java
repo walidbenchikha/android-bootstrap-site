@@ -2,11 +2,12 @@
 package com.donnfelker.android.bootstrap;
 
 import android.accounts.AccountsException;
+import android.app.Activity;
 
 import com.donnfelker.android.bootstrap.authenticator.ApiKeyProvider;
 import com.donnfelker.android.bootstrap.core.BootstrapService;
 import com.donnfelker.android.bootstrap.core.UserAgentProvider;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 import java.io.IOException;
 
@@ -15,8 +16,8 @@ import java.io.IOException;
  */
 public class BootstrapServiceProvider {
 
-    @Inject private ApiKeyProvider keyProvider;
-    @Inject private UserAgentProvider userAgentProvider;
+    @Inject ApiKeyProvider keyProvider;
+    @Inject UserAgentProvider userAgentProvider;
 
     /**
      * Get service for configured key provider
@@ -27,7 +28,7 @@ public class BootstrapServiceProvider {
      * @throws IOException
      * @throws AccountsException
      */
-    public BootstrapService getService() throws IOException, AccountsException {
-        return new BootstrapService(keyProvider.getAuthKey(), userAgentProvider);
+    public BootstrapService getService(Activity activity) throws IOException, AccountsException {
+        return new BootstrapService(keyProvider.getAuthKey(activity), userAgentProvider);
     }
 }

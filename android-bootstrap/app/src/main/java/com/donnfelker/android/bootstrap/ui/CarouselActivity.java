@@ -11,20 +11,22 @@ import android.support.v4.view.ViewPager;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
+import com.donnfelker.android.bootstrap.BootstrapApplication;
 import com.donnfelker.android.bootstrap.R;
 import com.donnfelker.android.bootstrap.R.id;
-import com.github.rtyley.android.sherlock.roboguice.activity.RoboSherlockFragmentActivity;
+
 import com.viewpagerindicator.TitlePageIndicator;
 
-import roboguice.inject.InjectView;
+import butterknife.InjectView;
+import butterknife.Views;
 
 /**
  * Activity to view the carousel and view pager indicator with fragments.
  */
-public class CarouselActivity extends RoboSherlockFragmentActivity {
+public class CarouselActivity extends BootstrapFragmentActivity {
 
-    @InjectView(id.tpi_header) private TitlePageIndicator indicator;
-    @InjectView(id.vp_pages) private ViewPager pager;
+    @InjectView(id.tpi_header) TitlePageIndicator indicator;
+    @InjectView(id.vp_pages) ViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

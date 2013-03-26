@@ -9,23 +9,36 @@ import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
 
+import com.donnfelker.android.bootstrap.BootstrapApplication;
 import com.donnfelker.android.bootstrap.BootstrapServiceProvider;
 import com.donnfelker.android.bootstrap.R;
+import com.donnfelker.android.bootstrap.authenticator.LogoutService;
 import com.donnfelker.android.bootstrap.core.News;
 import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
+import java.util.Collections;
 import java.util.List;
 
 public class NewsListFragment extends ItemListFragment<News> {
 
     @Inject protected BootstrapServiceProvider serviceProvider;
+    @Inject protected LogoutService logoutService;
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        BootstrapApplication.getInstance().inject(this);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         setEmptyText(R.string.no_news);
+
+
     }
 
     @Override
@@ -38,6 +51,11 @@ public class NewsListFragment extends ItemListFragment<News> {
         getListAdapter()
                 .addHeader(activity.getLayoutInflater()
                         .inflate(R.layout.news_list_item_labels, null));
+    }
+
+    @Override
+    LogoutService getLogoutService() {
+        return logoutService;
     }
 
     @Override
@@ -55,7 +73,12 @@ public class NewsListFragment extends ItemListFragment<News> {
             @Override
             public List<News> loadData() throws Exception {
                 try {
-                    return serviceProvider.getService().getNews();
+                    if(getActivity() != null) {
+                        return serviceProvider.getService(getActivity()).getNews();
+                    } else {
+                        return Collections.emptyList();
+                    }
+
                 } catch (OperationCanceledException e) {
                     Activity activity = getActivity();
                     if (activity != null)
