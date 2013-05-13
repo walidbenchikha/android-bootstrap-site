@@ -4,9 +4,8 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
 import android.content.Context;
-import android.util.Log;
-
 import com.donnfelker.android.bootstrap.core.Constants;
+import com.donnfelker.android.bootstrap.util.Ln;
 import com.donnfelker.android.bootstrap.util.SafeAsyncTask;
 
 import javax.inject.Inject;
@@ -62,7 +61,7 @@ public class LogoutService {
         protected void onSuccess(Boolean accountWasRemoved) throws Exception {
             super.onSuccess(accountWasRemoved);
 
-            Log.d("LOGOUT_SERVICE", "Logout succeeded:" + accountWasRemoved);
+            Ln.d("Logout succeeded: %s", accountWasRemoved);
             onSuccess.run();
 
         }
@@ -70,7 +69,7 @@ public class LogoutService {
         @Override
         protected void onException(Exception e) throws RuntimeException {
             super.onException(e);
-            Log.e("LOGOUT_SERVICE", "Logout failed.", e.getCause());
+            Ln.e(e.getCause(), "Logout failed.");
         }
     }
 }

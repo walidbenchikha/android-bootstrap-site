@@ -16,9 +16,8 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-
 import com.donnfelker.android.bootstrap.core.Constants;
+import com.donnfelker.android.bootstrap.util.Ln;
 
 class BootstrapAccountAuthenticator extends AbstractAccountAuthenticator {
 
@@ -73,7 +72,7 @@ class BootstrapAccountAuthenticator extends AbstractAccountAuthenticator {
     public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType,
             Bundle options) throws NetworkErrorException {
 
-        Log.d("AccountAuthenticator", "Attempting to get authToken");
+        Ln.d("Attempting to get authToken");
 
         String authToken = AccountManager.get(context).peekAuthToken(account, authTokenType);
         Bundle bundle = new Bundle();

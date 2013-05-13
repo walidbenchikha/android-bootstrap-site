@@ -3,6 +3,7 @@ package com.donnfelker.android.bootstrap.ui;
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -16,11 +17,15 @@ import butterknife.Views;
 public abstract class BootstrapActivity extends SherlockActivity {
 
     @Override
-    public void setContentView(int layoutResId) {
-        super.setContentView(layoutResId);
-
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         BootstrapApplication.getInstance().inject(this);
+    }
+
+    @Override
+    public void setContentView(int layoutResId) {
+        super.setContentView(layoutResId);
 
         // Used to inject views with the Butterknife library
         Views.inject(this);

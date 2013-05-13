@@ -11,6 +11,7 @@ import butterknife.Views;
  * Base class for all Bootstrap Activities that need fragments.
  */
 public class BootstrapFragmentActivity extends SherlockFragmentActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -46,6 +46,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <android.version>4.1.1.4</android.version>
+        <maven.resources.version>2.6</maven.resources.version>
     </properties>
     <build>
         <pluginManagement>

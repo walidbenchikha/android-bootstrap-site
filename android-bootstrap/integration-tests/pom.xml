@@ -73,6 +73,7 @@
                         </goals>
                     </execution>
                 </executions>
+                <version>${maven.resources.version}</version>
             </plugin>
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>

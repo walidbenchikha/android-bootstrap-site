@@ -30,7 +30,7 @@ import dagger.Provides;
 (
         complete = false,
 
-        entryPoints = {
+        injects = {
                 BootstrapApplication.class,
                 BootstrapAuthenticatorActivity.class,
                 CarouselActivity.class,

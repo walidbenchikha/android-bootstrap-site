@@ -247,7 +247,7 @@ public class BootstrapAuthenticatorActivity extends SherlockAccountAuthenticator
                         .header(HEADER_PARSE_REST_API_KEY, PARSE_REST_API_KEY);
 
 
-                Log.d("Auth", "response=" + request.code());
+                Ln.d("Authentication response=%s", request.code());
 
                 if(request.ok()) {
                     final User model = new Gson().fromJson(Strings.toString(request.buffer()), User.class);
