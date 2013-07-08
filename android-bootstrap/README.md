@@ -8,7 +8,7 @@ to report any bugs or feature requests and to see the list of known issues.
 
 Have a questions about Android Bootstrap? Ask away on the [android-bootstrap discussion forum](https://groups.google.com/forum/#!forum/android-bootstrap). 
 
-<a href="https://play.google.com/store/apps/details?id=com.donnfelker.android.bootstrap" alt="Download from Google Play">
+<a href="https://play.google.com/store/apps/details?id=com.donnfelker.android.bootSome fo thestrap" alt="Download from Google Play">
   <img src="http://f.cl.ly/items/000s3k2I2J1V281X2A1f/bootstrap-image.png">
 </a>
 
@@ -95,7 +95,7 @@ you will then be able to install your own built version.
 
 Android Bootstrap is a result of a template project I've developed over the years as well as
 a combination of a lot of great work that the [GitHub Gaug.es](http://www.github.com/github/gauges-android)
-app and [GitHub Android](http://www.github.com/github/android) app showcased. Some fo the
+app and [GitHub Android](http://www.github.com/github/android) app showcased. Some of the
 code in this project is based on the GitHub Gaug.es and GitHub Android app.
 
 Android Bootstrap is built on the awesome [Parse.com API](http://www.parse.com/)
