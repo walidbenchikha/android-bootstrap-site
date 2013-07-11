@@ -2,6 +2,7 @@
 
 package com.donnfelker.android.bootstrap.ui;
 
+import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -9,8 +10,13 @@ import android.view.View;
 
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
+import com.donnfelker.android.bootstrap.BootstrapServiceProvider;
 import com.donnfelker.android.bootstrap.R;
+import com.donnfelker.android.bootstrap.core.BootstrapService;
+import com.donnfelker.android.bootstrap.util.SafeAsyncTask;
 import com.viewpagerindicator.TitlePageIndicator;
+
+import javax.inject.Inject;
 
 import butterknife.InjectView;
 import butterknife.Views;
@@ -25,7 +31,11 @@ public class CarouselActivity extends BootstrapFragmentActivity {
     @InjectView(R.id.tpi_header) TitlePageIndicator indicator;
     @InjectView(R.id.vp_pages) ViewPager pager;
 
+    @Inject BootstrapServiceProvider serviceProvider;
+
     private MenuDrawer menuDrawer;
+
+    private boolean userHasAuthenticated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +53,51 @@ public class CarouselActivity extends BootstrapFragmentActivity {
 
         Views.inject(this);
 
-        pager.setAdapter(new BootstrapPagerAdapter(getResources(), getSupportFragmentManager()));
+        checkAuth();
 
-        indicator.setViewPager(pager);
-        pager.setCurrentItem(1);
+    }
+
+    private void initScreen() {
+        if(userHasAuthenticated) {
+            pager.setAdapter(new BootstrapPagerAdapter(getResources(), getSupportFragmentManager()));
+
+            indicator.setViewPager(pager);
+            pager.setCurrentItem(1);
+
+        }
 
         setNavListeners();
     }
+
+    private void checkAuth() {
+        new SafeAsyncTask<Boolean>() {
+
+            @Override
+            public Boolean call() throws Exception {
+                    final BootstrapService svc = serviceProvider.getService(CarouselActivity.this);
+                    return svc != null;
+
+            }
+
+            @Override
+            protected void onException(Exception e) throws RuntimeException {
+                super.onException(e);
+                if(e instanceof OperationCanceledException) {
+                    // User cancelled the authentication process (back button, etc).
+                    // Since auth could not take place, lets finish this activity.
+                    finish();
+                }
+            }
+
+            @Override
+            protected void onSuccess(Boolean hasAuthenticated) throws Exception {
+                super.onSuccess(hasAuthenticated);
+                userHasAuthenticated = true;
+                initScreen();
+            }
+        }.execute();
+    }
+
 
     private void setNavListeners() {
 

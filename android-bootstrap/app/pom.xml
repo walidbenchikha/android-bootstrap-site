@@ -190,6 +190,7 @@
                                 <debug>false</debug>
                             </sign>
                             <zipalign>
+                                <skip>false</skip>
                                 <verbose>true</verbose>
                                 <outputApk>${project.build.directory}/${project.artifactId}-${project.version}-signed-aligned.apk</outputApk>
                             </zipalign>
