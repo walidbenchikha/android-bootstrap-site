@@ -8,6 +8,7 @@ import android.os.Bundle;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.donnfelker.android.bootstrap.BootstrapApplication;
+import com.donnfelker.android.bootstrap.Injector;
 
 import butterknife.Views;
 
@@ -20,7 +21,7 @@ public abstract class BootstrapActivity extends SherlockActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BootstrapApplication.getInstance().inject(this);
+        Injector.inject(this);
     }
 
     @Override

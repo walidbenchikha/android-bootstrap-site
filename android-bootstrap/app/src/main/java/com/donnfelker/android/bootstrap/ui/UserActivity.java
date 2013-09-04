@@ -5,21 +5,16 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.donnfelker.android.bootstrap.BootstrapApplication;
 import com.donnfelker.android.bootstrap.R;
-import com.donnfelker.android.bootstrap.core.AvatarLoader;
 import com.donnfelker.android.bootstrap.core.User;
-import javax.inject.Inject;
+import com.squareup.picasso.Picasso;
 
 import butterknife.InjectView;
-import butterknife.Views;
 
 public class UserActivity extends BootstrapActivity {
 
     @InjectView(R.id.iv_avatar) protected ImageView avatar;
     @InjectView(R.id.tv_name) protected TextView name;
-
-    @Inject protected AvatarLoader avatarLoader;
 
     protected User user;
 
@@ -36,7 +31,8 @@ public class UserActivity extends BootstrapActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        avatarLoader.bind(avatar, user);
+        Picasso.with(this).load(user.getAvatarUrl()).placeholder(R.drawable.gravatar_icon).into(avatar);
+
         name.setText(String.format("%s %s", user.getFirstName(), user.getLastName()));
 
     }

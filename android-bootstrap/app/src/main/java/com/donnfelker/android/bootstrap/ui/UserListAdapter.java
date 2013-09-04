@@ -3,10 +3,11 @@ package com.donnfelker.android.bootstrap.ui;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 
+import com.donnfelker.android.bootstrap.BootstrapApplication;
 import com.donnfelker.android.bootstrap.R;
-import com.donnfelker.android.bootstrap.core.AvatarLoader;
 import com.donnfelker.android.bootstrap.core.User;
 import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -17,24 +18,22 @@ import java.util.List;
 public class UserListAdapter extends SingleTypeAdapter<User> {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MMMM dd");
-    private final AvatarLoader avatars;
 
     /**
      * @param inflater
      * @param items
      */
-    public UserListAdapter(LayoutInflater inflater, List<User> items, AvatarLoader avatars) {
+    public UserListAdapter(LayoutInflater inflater, List<User> items) {
         super(inflater, R.layout.user_list_item);
 
-        this.avatars = avatars;
         setItems(items);
     }
 
     /**
      * @param inflater
      */
-    public UserListAdapter(LayoutInflater inflater, AvatarLoader avatars) {
-        this(inflater, null, avatars);
+    public UserListAdapter(LayoutInflater inflater) {
+        this(inflater, null);
 
     }
 
@@ -53,7 +52,10 @@ public class UserListAdapter extends SingleTypeAdapter<User> {
     @Override
     protected void update(int position, User user) {
 
-        avatars.bind(imageView(0), user);
+        Picasso.with(BootstrapApplication.getInstance())
+                .load(user.getAvatarUrl())
+                .placeholder(R.drawable.gravatar_icon)
+                .into(imageView(0));
 
         setText(1, String.format("%1$s %2$s", user.getFirstName(), user.getLastName()));
 

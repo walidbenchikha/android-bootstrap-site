@@ -1,5 +1,7 @@
 package com.donnfelker.android.bootstrap.core;
 
+import android.text.TextUtils;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -70,6 +72,19 @@ public class User implements Serializable {
     }
 
     public String getAvatarUrl() {
+        if (TextUtils.isEmpty(avatarUrl)) {
+            String gravatarId = getGravatarId();
+            if (TextUtils.isEmpty(gravatarId))
+                gravatarId = GravatarUtils.getHash(getUsername());
+            avatarUrl = getAvatarUrl(gravatarId);
+        }
         return avatarUrl;
+    }
+
+    private String getAvatarUrl(String id) {
+        if (!TextUtils.isEmpty(id))
+            return "https://secure.gravatar.com/avatar/" + id + "?d=404";
+        else
+            return null;
     }
 }

@@ -12,6 +12,7 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 
 import com.donnfelker.android.bootstrap.BootstrapApplication;
+import com.donnfelker.android.bootstrap.Injector;
 import com.donnfelker.android.bootstrap.R;
 import com.donnfelker.android.bootstrap.ui.BootstrapTimerActivity;
 import javax.inject.Inject;
@@ -46,7 +47,7 @@ public class TimerService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        BootstrapApplication.getInstance().inject(this);
+        Injector.inject(this);
 
         // Register the bus so we can send notifications.
         BUS.register(this);

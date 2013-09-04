@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.donnfelker.android.bootstrap.BootstrapApplication;
+import com.donnfelker.android.bootstrap.Injector;
 
 import butterknife.Views;
 
@@ -16,7 +17,7 @@ public class BootstrapFragmentActivity extends SherlockFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BootstrapApplication.getInstance().inject(this);
+        Injector.inject(this);
     }
 
     @Override

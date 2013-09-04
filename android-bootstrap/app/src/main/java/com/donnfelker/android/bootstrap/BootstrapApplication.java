@@ -18,7 +18,6 @@ import dagger.ObjectGraph;
 public class BootstrapApplication extends Application {
 
     private static BootstrapApplication instance;
-    ObjectGraph objectGraph;
 
     /**
      * Create main application
@@ -46,10 +45,9 @@ public class BootstrapApplication extends Application {
         super.onCreate();
 
         instance = this;
-        // Perform Injection
-        objectGraph = ObjectGraph.create(getRootModule());
-        objectGraph.inject(this);
-        objectGraph.injectStatics();
+
+        // Perform injection
+        Injector.init(getRootModule(), this);
 
     }
 
@@ -67,13 +65,6 @@ public class BootstrapApplication extends Application {
         this();
         attachBaseContext(instrumentation.getTargetContext());
     }
-
-    public void inject(Object object)
-    {
-        objectGraph.inject(object);
-    }
-
-
 
     public static BootstrapApplication getInstance() {
         return instance;

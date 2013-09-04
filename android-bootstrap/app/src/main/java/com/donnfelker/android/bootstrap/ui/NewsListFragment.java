@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.donnfelker.android.bootstrap.BootstrapApplication;
 import com.donnfelker.android.bootstrap.BootstrapServiceProvider;
+import com.donnfelker.android.bootstrap.Injector;
 import com.donnfelker.android.bootstrap.R;
 import com.donnfelker.android.bootstrap.authenticator.LogoutService;
 import com.donnfelker.android.bootstrap.core.News;
@@ -29,7 +30,7 @@ public class NewsListFragment extends ItemListFragment<News> {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BootstrapApplication.getInstance().inject(this);
+        Injector.inject(this);
     }
 
     @Override

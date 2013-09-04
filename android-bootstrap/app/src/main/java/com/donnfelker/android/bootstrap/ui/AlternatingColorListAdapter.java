@@ -3,7 +3,7 @@ package com.donnfelker.android.bootstrap.ui;
 
 import android.view.LayoutInflater;
 
-import com.actionbarsherlock.R.color;
+import com.donnfelker.android.bootstrap.R;
 import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
 import com.donnfelker.android.bootstrap.R.drawable;
 
@@ -49,8 +49,8 @@ public abstract class AlternatingColorListAdapter<V> extends
             primaryResource = drawable.table_background_selector;
             secondaryResource = drawable.table_background_alternate_selector;
         } else {
-            primaryResource = color.pager_background;
-            secondaryResource = color.pager_background_alternate;
+            primaryResource = R.color.pager_background;
+            secondaryResource = R.color.pager_background_alternate;
         }
 
         setItems(items);

@@ -1,6 +1,5 @@
 package com.donnfelker.android.bootstrap.ui;
 
-import static com.donnfelker.android.bootstrap.core.Constants.Extra.NEWS_ITEM;
 import static com.donnfelker.android.bootstrap.core.Constants.Extra.USER;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
@@ -10,30 +9,27 @@ import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ListView;
 
-import com.donnfelker.android.bootstrap.BootstrapApplication;
 import com.donnfelker.android.bootstrap.BootstrapServiceProvider;
+import com.donnfelker.android.bootstrap.Injector;
 import com.donnfelker.android.bootstrap.R;
 import com.donnfelker.android.bootstrap.authenticator.LogoutService;
-import com.donnfelker.android.bootstrap.core.AvatarLoader;
-import com.donnfelker.android.bootstrap.core.News;
 import com.donnfelker.android.bootstrap.core.User;
 import com.github.kevinsawicki.wishlist.SingleTypeAdapter;
-import javax.inject.Inject;
 
+import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 
 public class UserListFragment  extends ItemListFragment<User> {
 
     @Inject BootstrapServiceProvider serviceProvider;
-    @Inject AvatarLoader avatars;
     @Inject LogoutService logoutService;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BootstrapApplication.getInstance().inject(this);
+        Injector.inject(this);
     }
 
     @Override
@@ -109,6 +105,6 @@ public class UserListFragment  extends ItemListFragment<User> {
 
     @Override
     protected SingleTypeAdapter<User> createAdapter(List<User> items) {
-        return new UserListAdapter(getActivity().getLayoutInflater(), items, avatars);
+        return new UserListAdapter(getActivity().getLayoutInflater(), items);
     }
 }

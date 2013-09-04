@@ -45,7 +45,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <android.version>4.1.1.4</android.version>
+        <android.version>4.2.2</android.version>
         <maven.resources.version>2.6</maven.resources.version>
     </properties>
     <build>
@@ -58,7 +58,7 @@
                     <extensions>true</extensions>
                     <configuration>
                         <sdk>
-                            <platform>16</platform>
+                            <platform>17</platform>
                         </sdk>
                         <!--<undeployBeforeDeploy>true</undeployBeforeDeploy>-->
                         <proguard>
