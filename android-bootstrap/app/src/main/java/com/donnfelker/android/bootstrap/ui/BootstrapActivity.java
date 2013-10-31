@@ -4,10 +4,9 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.MenuItem;
 
-import com.actionbarsherlock.app.SherlockActivity;
-import com.actionbarsherlock.view.MenuItem;
-import com.donnfelker.android.bootstrap.BootstrapApplication;
 import com.donnfelker.android.bootstrap.Injector;
 
 import butterknife.Views;
@@ -15,7 +14,7 @@ import butterknife.Views;
 /**
  * Base activity for a Bootstrap activity which does not use fragments.
  */
-public abstract class BootstrapActivity extends SherlockActivity {
+public abstract class BootstrapActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
