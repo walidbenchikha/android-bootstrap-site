@@ -3,19 +3,31 @@ html
   include inc/header
 
   body
-    div.navbar.navbar-fixed-top.navbar-inverse
-      div.navbar-inner
-        div.container
-          a(data-toggle='collapse', data-target='.nav-collapse').btn.btn-navbar
+    div(role='navigation').navbar.navbar-inverse.navbar-default
+      div.navbar-header
+        button(type='button', data-toggle='collapse', data-target='.navbar-collapse').navbar-toggle
+            span.sr-only Toggle navigation
             span.icon-bar
             span.icon-bar
             span.icon-bar
-          a(href='#').brand Android Bootstrap
-          ul.nav
-            li.active
-              a(href='#') Home
-            li
-              a(href='http://www.github.com/donnfelker/android-bootstrap') Open Source
+        a(href='#').navbar-brand ANDROID BOOTSTRAP
+      div.navbar-collapse.collapse
+        ul.nav.navbar-nav
+          li.active
+            a(href='#') Home
+          li
+            a(href='http://www.github.com/donnfelker/android-bootstrap') Open Source
+        ul.nav.navbar-nav.navbar-right
+          li.dropdown
+            a(href='#', data-toggle='dropdown').dropdown-toggle by Donn Felker
+              b.caret
+            ul.dropdown-menu
+              li
+                a(href="http://www.donnfelker.com", target='_blank') About 
+              li 
+                a(href='http://www.agilevent.com/android-oncall', target='_blank') Android On-Call Expertise
+              li
+                a(href="http://www.agilevent.com", target='_blank') Work
 
     div.container
       block content

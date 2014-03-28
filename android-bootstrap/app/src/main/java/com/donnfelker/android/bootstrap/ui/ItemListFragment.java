@@ -3,9 +3,14 @@ package com.donnfelker.android.bootstrap.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -16,10 +21,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.donnfelker.android.bootstrap.R;
 import com.donnfelker.android.bootstrap.R.id;
 import com.donnfelker.android.bootstrap.R.layout;
@@ -39,7 +40,7 @@ import java.util.List;
  *
  * @param <E>
  */
-public abstract class ItemListFragment<E> extends SherlockFragment
+public abstract class ItemListFragment<E> extends Fragment
         implements LoaderCallbacks<List<E>> {
 
     private static final String FORCE_REFRESH = "forceRefresh";
@@ -199,9 +200,13 @@ public abstract class ItemListFragment<E> extends SherlockFragment
         if (!isUsable())
             return;
 
-        getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+        getActionBarActivity().setSupportProgressBarIndeterminateVisibility(true);
 
         getLoaderManager().restartLoader(0, args, this);
+    }
+
+    private ActionBarActivity getActionBarActivity() {
+        return ((ActionBarActivity)getActivity());
     }
 
     /**
@@ -214,7 +219,7 @@ public abstract class ItemListFragment<E> extends SherlockFragment
 
     public void onLoadFinished(Loader<List<E>> loader, List<E> items) {
 
-        getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
+        getActionBarActivity().setSupportProgressBarIndeterminateVisibility(false);
 
         Exception exception = getException(loader);
         if (exception != null) {

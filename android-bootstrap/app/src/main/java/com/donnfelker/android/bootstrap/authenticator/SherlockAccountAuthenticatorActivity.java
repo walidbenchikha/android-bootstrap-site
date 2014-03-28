@@ -21,10 +21,9 @@ package com.donnfelker.android.bootstrap.authenticator;
 
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import com.actionbarsherlock.app.SherlockActivity;
+import android.support.v7.app.ActionBarActivity;
+
 
 /**
  * Base class for implementing an Activity that is used to help implement an
@@ -40,7 +39,7 @@ import com.actionbarsherlock.app.SherlockActivity;
  * is never set or if it is set to null then error {@link android.accounts.AccountManager#ERROR_CODE_CANCELED}
  * will be called on the response.
  */
-public class SherlockAccountAuthenticatorActivity extends SherlockActivity {
+public class SherlockAccountAuthenticatorActivity extends ActionBarActivity {
     private AccountAuthenticatorResponse mAccountAuthenticatorResponse = null;
     private Bundle mResultBundle = null;
 
