@@ -1,6 +1,8 @@
 {
   "name": "android-bootstrap",
-  "version": "0.0.1",
+  "description": "An Android App generator for bootstrapping an Android App",
+  "author": "Donn Felker <donn@donnfelker.com>",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "start": "node app"
@@ -12,6 +14,7 @@
     "async": "~0.1.22",
     "node-native-zip": "git://github.com/donnfelker/node-native-zip.git#master"
   },
+  "repository": "https://github.com/donnfelker/android-bootstrap-site.git",
   "engines": {
     "node": "10.26.x",
     "npm": "1.4.3"
